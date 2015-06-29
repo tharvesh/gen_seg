@@ -6,7 +6,7 @@ from optparse import OptionParser
 import subprocess
 import os
 import os.path
-from itertools import izip
+import itertools
 
 
 # Method to parse options
@@ -110,8 +110,8 @@ def run_bedmap(bedmap_path, bed_dir, created_windows_bed_fname):
 
 def format_output(counts, out_base, created_w_bed_fname):
     if out_base == None:
-        for l1, l2, l3 in izip(*counts):
-            print str(l1) + '\t' + str(l2) + '\t' + str(l3)
+        for count in itertools.izip_longest(*counts):
+            print "\t".join(str(i) for i in count)
     else:
         created_w_bed_fname = os.getcwd() + "/" + created_w_bed_fname
 
@@ -125,6 +125,20 @@ def format_output(counts, out_base, created_w_bed_fname):
         out_mat = out_base + ".matrix"
         out_txt = out_base + ".txt"
         out1 = open(out_mat,"w")
+        out2 = open(out_txt,"w")
+
+        #Writing matrix
+        for count in itertools.izip_longest(*counts):
+            out1.write("\t".join(str(i) for i in count) + "\n")
+        out1.close()
+
+        #Writing text
+        counts.insert(0,first_col)
+        for count in itertools.izip_longest(*counts):
+            out2.write("\t".join(str(i) for i in count) + "\n")
+        out2.close()
+
+    return None
 
 
 def main():
