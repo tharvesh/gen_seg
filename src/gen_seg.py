@@ -50,21 +50,33 @@ def run_make_windows(g_idx, win_size, step_size):
 
 
 def run_bamtobed(bam_folder):
+    # Making bed folder
+    dir_to_make = os.getcwd() + "/bed"
+    if not os.path.exists(dir_to_make):
+        os.makedirs(dir_to_make)
+    else:
+        pass
+    bed_dir = dir_to_make
+
     if os.path.isdir(bam_folder):
         for fl in os.listdir(bam_folder):
             if fl.endswith('.bam'):
+                # Creating output filename
                 outflname = os.path.splitext(fl)[0] + '.bed'
+                outflname = os.path.join(bed_dir,outflname)
+                # Creata an instance of file with write mode
                 out = open(outflname, "w")
-                fl = os.path.join(bam_folder,fl)
+                fl = os.path.join(bam_folder, fl)
                 cmd = ["bedtools", "bamtobed", "-i", fl]
                 p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 
                 for line in p.stdout:
                     out.write("%s" % line)
-        return None
+        return bed_dir
     else:
         print 'Unable find the given bam directory'
         exit()
+
 
 def run_bedmap():
     pass
@@ -75,7 +87,8 @@ def main():
 
     # print bam_folder, g_idx,win_size,step_size
     windows_bed = run_make_windows(g_idx, win_size, step_size)
-    run_bamtobed(bam_folder)
+    bed_dir = run_bamtobed(bam_folder)
+    
 
 
 if __name__ == "__main__":
