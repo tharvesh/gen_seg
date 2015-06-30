@@ -100,8 +100,9 @@ def run_bedmap(bedmap_path, bed_dir, created_windows_bed_fname):
         bed = bed_dir + "/" + bed
         cmd = [bedmap_path, "--fraction-map", "0.5", "--count", created_windows_bed_fname, bed]
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-
+        colname = os.path.basename(bed)
         temp = []
+        temp.append(os.path.splitext(colname)[0])
         for item in p.stdout:
             temp.append(item.strip())
         counts.append(temp)
@@ -117,6 +118,7 @@ def format_output(counts, out_base, created_w_bed_fname):
 
         # Chunk to write first column of the text file
         first_col = []
+        first_col.append('segment')
         for line in open(created_w_bed_fname).readlines():
             line = line.strip()
             line = line.replace("\t","_")
