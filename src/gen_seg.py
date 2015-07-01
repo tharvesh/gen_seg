@@ -159,9 +159,9 @@ def main():
 
     # print bam_folder, g_idx,win_size,step_size
     created_windows_bed_fname = run_make_windows(g_idx, win_size, step_size)
-    #bed_dir = run_bamtobed(bam_folder)
-    #counts = run_bedmap(bedmap_path, bed_dir, created_windows_bed_fname)
-    #format_output(counts, out_base, created_windows_bed_fname)
+    bed_dir = run_bamtobed(bam_folder)
+    counts = run_bedmap(bedmap_path, bed_dir, created_windows_bed_fname)
+    format_output(counts, out_base, created_windows_bed_fname)
     create_annot(created_windows_bed_fname,out_base)
 
 if __name__ == "__main__":
