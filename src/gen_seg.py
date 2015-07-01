@@ -109,6 +109,17 @@ def run_bedmap(bedmap_path, bed_dir, created_windows_bed_fname):
     return counts
 
 
+def create_annot(created_w_bed_fname,out_base):
+    out = open(out_base+".annot","w")
+    first_col = []
+    for line in open(created_w_bed_fname).readlines():
+        line = line.strip()
+        line = line.replace("\t","_")
+        first_col.append(line)
+
+    for bed_line,first_col in zip(open(created_w_bed_fname).readlines(),first_col):
+        out.write(bed_line.strip() + "\t" + first_col + "\n")
+
 def format_output(counts, out_base, created_w_bed_fname):
     if out_base == None:
         for count in itertools.izip_longest(*counts):
@@ -148,10 +159,10 @@ def main():
 
     # print bam_folder, g_idx,win_size,step_size
     created_windows_bed_fname = run_make_windows(g_idx, win_size, step_size)
-    bed_dir = run_bamtobed(bam_folder)
-    counts = run_bedmap(bedmap_path, bed_dir, created_windows_bed_fname)
-    format_output(counts, out_base, created_windows_bed_fname)
-
+    #bed_dir = run_bamtobed(bam_folder)
+    #counts = run_bedmap(bedmap_path, bed_dir, created_windows_bed_fname)
+    #format_output(counts, out_base, created_windows_bed_fname)
+    create_annot(created_windows_bed_fname,out_base)
 
 if __name__ == "__main__":
     main()
