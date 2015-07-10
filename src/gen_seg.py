@@ -53,7 +53,19 @@ def run_make_windows(g_idx, win_size, step_size):
             out.write("%s" % line)
         out.close()
 
-        return outfile
+        #Sorting the output of make windows
+        outfile_sorted = 'hg19.' + win_size + '_window_' + step_size + '_steps.sorted.bed'
+        out1 = open(outfile_sorted,"w")
+        cmd2 = ["sort","-k1,1","-k2,2n","-o",outfile_sorted,outfile]
+        p1 = subprocess.Popen(cmd2, stdout=subprocess.PIPE)
+        for line in p1.stdout:
+            out1.write("%s" % line)
+        out1.close()
+
+        #removing unsorted file
+        os.remove(outfile)
+        
+        return outfile_sorted
     else:
         print "Unable to find fasta index(fai) file"
         exit()
@@ -96,7 +108,13 @@ def run_bamtobed(bam_folder):
 def run_bedmap(bedmap_path, bed_dir, created_windows_bed_fname):
     counts = []
     created_windows_bed_fname = os.getcwd() + "/" + created_windows_bed_fname
+
+    sorted_bed = []
     for bed in os.listdir(bed_dir):
+        sorted_bed.append(bed)
+    sorted_bed = sorted(sorted_bed)
+
+    for bed in sorted_bed:
         bed = bed_dir + "/" + bed
         cmd = [bedmap_path, "--fraction-map", "0.5", "--count", created_windows_bed_fname, bed]
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
